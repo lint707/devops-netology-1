@@ -2,3 +2,5 @@ new text
 
 second text
 :wq
+
+third text
