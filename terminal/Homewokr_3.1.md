@@ -1,5 +1,4 @@
-# Домашнее задание к занятию "3.1. Работа в терминале, лекция 1
-
+# Домашнее задание к занятию "3.1. Работа в терминале, лекция 1"
 1. Установил средство виртуализации **Oracle VirtualBox**.
 </br>
 2. Установил средство автоматизации **Hashicorp Vagrant**.
@@ -10,9 +9,7 @@
 </br>
 5. Ознакомился с графическим интерфейсом **VirtualBox**, посмотрел как выглядит виртуальная машина, которую создал для вас **Vagrant**:
 </br>
-![VirtualBox](https://drive.google.com/file/d/1brsYgDRZVz9E9BRuP2-VxpeMMdThHBme/view?usp=sharing)
-</br>
-![VirtualBox2](https://disk.yandex.ru/d/K6F-lHjzrOtsBw)
+![VirtualBox](https://i.ibb.co/9hNym8G/Virtualbox-default.jpg)
 </br>
 6. Ознакомьтесь с возможностями конфигурации VirtualBox через Vagrantfile: документация. Как добавить оперативной памяти или ресурсов процессора виртуальной машине?
 </br>
