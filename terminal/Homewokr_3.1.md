@@ -9,7 +9,7 @@
 </br>
 5. Ознакомился с графическим интерфейсом **VirtualBox**, посмотрел как выглядит виртуальная машина, которую создал для вас **Vagrant**:
 </br>
-![VirtualBox](https://i.ibb.co/HCVGLFX/Virtualbox-default.jpg)
+![VirtualBox](https://i.ibb.co/9hNym8G/Virtualbox-default.jpg)
 </br>
 6. Ознакомьтесь с возможностями конфигурации VirtualBox через Vagrantfile: документация. Как добавить оперативной памяти или ресурсов процессора виртуальной машине?
 </br>
