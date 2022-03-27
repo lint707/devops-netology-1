@@ -94,10 +94,16 @@
 	vagrant@vagrant:~/test2$
     ```
     
-1. Получится ли находясь в графическом режиме, вывести данные из PTY в какой-либо из эмуляторов TTY? Сможете ли вы наблюдать выводимые данные?
+1. Получилось вывести  вывести данные из PTY в какой-либо из эмуляторов TTY. 
     ```
-	ХЗХЗХЗЗХЗХХЗХЗЗХЗХЗЗХЗХЗХЗХЗХЗХЗХЗХХЗХЗХХЗХЗХЗХЗХЗХЗХЗХЗ
+	vagrant@vagrant:~$ tty
+	/dev/pts/4
+	vagrant@vagrant:~$ echo TEST text >/dev/tty4
+	vagrant@vagrant:~$
     ```
+   Отобразилось в данном виде:
+   ![tty](img/tty.jpg)
+
 1. При выполнении команды `bash 5>&1`, создаётся новый дескриптор `5`, который перенаправит в `1`.
     ```
 	vagrant@vagrant:~$ echo netology > /proc/$$/fd/5
@@ -158,10 +164,27 @@
 	OLDPWD=/home/vagrant
     ```
 1. Используя `man`, опишите что доступно по адресам `/proc/<PID>/cmdline`, `/proc/<PID>/exe`.
+	/proc/[pid]/cmdline - страница **226**
+	Этот файл, доступный только для чтения, содержит полную командную строку для процесса, если только процесс не является зомби.
+	В последнем случае в этом файле ничего нет: то есть чтение этого файла вернет 0 символов.
+	/proc/[pid]/exe - страница **279**
+	В Linux 2.2 и более поздних версиях этот файл представляет собой символическую ссылку, содержащую фактический путь к выполняемой команде.
+    ```	
+	226        /proc/[pid]/cmdline
+	This read-only file holds the complete command line for the process, unless the process  is  a  zombie.
+	In  the  latter case, there is nothing in this file: that is, a read on this file will return 0 characters.  
+	The command-line arguments appear in this file as a set  of  strings  separated  by  null bytes ('\0'), with a further null byte after the last string.
+	
+	279        /proc/[pid]/exe
+	Under  Linux 2.2 and later, this file is a symbolic link containing the actual pathname of the executedcommand.  
+	This symbolic link can be dereferenced normally; attempting to open it  will  open  the exe‐cutable.   
+	You  can  even type /proc/[pid]/exe to run another copy of the same executable that is being run by process [pid].  
+	If the pathname has been unlinked, the symbolic link  will  contain  the  string '(deleted)'  appended  to the original pathname.  
+	In a multithreaded process, the contents of this symbolic link are not  available  if  the  main  thread  has  already  terminated  (typically  by  calling pthread_exit(3)).
+	Permission  to dereference or read (readlink(2)) this symbolic link is governed by a ptrace access  mode PTRACE_MODE_READ_FSCREDS check; see ptrace(2).
+	Under Linux 2.0 and earlier, /proc/[pid]/exe is a pointer to the binary which was executed, and appears as a symbolic link.
+	
     ```
-	ХЗХЗХЗЗХЗХХЗХЗЗХЗХЗЗХЗХЗХЗХЗХЗХЗХЗХХЗХЗХХЗХЗХЗХЗХЗХЗХЗХЗ
-    ```
-
 1. Наиболее старшая версию набора инструкций SSE - **sse4_2**.
     ```
 	vagrant@vagrant:~/test2$ grep sse /proc/cpuinfo
@@ -171,38 +194,29 @@
 	flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d
 	vagrant@vagrant:~/test2$
     ```
-1. При открытии нового окна терминала и `vagrant ssh` создается новая сессия и выделяется pty. Это можно подтвердить командой `tty`, которая упоминалась в лекции 3.2. Однако:
+1. При выполнении команды с добавлением `-t` команда исполняется c принудительным созданием псевдотерминала.
     ```
-	ХЗХЗХЗЗХЗХХЗХЗЗХЗХЗЗХЗХЗХЗХЗХЗХЗХЗХХЗХЗХХЗХЗХЗХЗХЗХЗХЗХЗ
-    ```
-    ```bash
-	vagrant@netology1:~$ ssh localhost 'tty'
-	not a tty
-    ```
-
-	Почитайте, почему так происходит, и как изменить поведение.
-
-
-1. Бывает, что есть необходимость переместить запущенный процесс из одной сессии в другую. Попробуйте сделать это, воспользовавшись `reptyr`. Например, так можно перенести в `screen` процесс, который вы запустили по ошибке в обычной SSH-сессии.
-    ```
-	ХЗХЗХЗЗХЗХХЗХЗЗХЗХЗЗХЗХЗХЗХЗХЗХЗХЗХХЗХЗХХЗХЗХЗХЗХЗХЗХЗХЗ
+	vagrant@vagrant:~$ ssh -t localhost 'tty'
+	vagrant@localhost's password:
+	/dev/pts/5
+	Connection to localhost closed.
+	vagrant@vagrant:~$
     ```
 
-1. `sudo echo string > /root/new_file` не даст выполнить перенаправление под обычным пользователем, так как перенаправлением занимается процесс shell'а, который запущен без `sudo` под вашим пользователем. Для решения данной проблемы можно использовать конструкцию `echo string | sudo tee /root/new_file`. Узнайте что делает команда `tee` и почему в отличие от `sudo echo` команда с `sudo tee` будет работать.
-
-Команда `tee` делает вывод одновременно и в файл, указаный в качестве параметра, и в `stdout`, 
-Команда tee читает из стандартного ввода и записывает как в стандартный вывод, так и в один или несколько файлов одновременно.
-команда tee используется для отображения стандартного вывода ( stdout ) программы и записи его в файл.
-Команда tee в Linux считывает стандартный ввод и записывает его одновременно в стандартный вывод и в один или несколько подготовленных файлов.
-Это потому, что после запуска sudo echo вы по-прежнему входите в систему как обычный пользователь без полномочий root. 
-И ваша оболочка (обычно bash) пытается записать в /root/somefile ваши учетные данные обычного пользователя.
-
-в данном примере команда получает вывод из `stdin`, перенаправленный через `pipe` от `stdout` команды `echo`
+1. Установил `reptyr`, после изменил настройку `sudo nano /proc/sys/kernel/yama/ptrace_scope` где заменил `1` на `0`.
+Выполнил команду `sudo reptyr -T 1401` где PID `1401 pts/1    00:00:00 screen`, после закрыл терминал, во втором терминале данный процесс остался.
+    ```
+	vagrant@vagrant:~$ ps -a
+	PID TTY          TIME CMD
+	1401 pts/1    00:00:00 screen
+	1442 pts/2    00:00:00 sudo
+	1444 pts/2    00:00:01 reptyr
+	1551 pts/0    00:00:00 ping
+	1574 pts/4    00:00:00 ps
+    ```
+1. Команда `tee` считывает стандартный ввод и записывает его одновременно в стандартный вывод и в один или несколько подготовленных файлов.
+Если брать `sudo echo string > /root/new_file`, команда завершится ошибкой, потому что перенаправление вывода не выполняется `sudo`. Перенаправление выполняется от имени непривилегированного пользователя.
+При выполнении `echo string | sudo tee /root/new_file`, команда получает вывод из `stdin`, перенаправленный через `pipe` от `stdout` команды `echo`
 и так как команда запущена от `sudo` , соотвественно имеет права на запись в файл
-    ```
-		NAME
-	       tee - read from standard input and write to standard output and files
-	DESCRIPTION
-	       Copy standard input to each FILE, and also to standard output.
-    ```
+
 ---
