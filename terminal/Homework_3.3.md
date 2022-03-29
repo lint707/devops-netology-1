@@ -30,8 +30,36 @@
     openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3
     ```
     
-1. Предположим, приложение пишет лог в текстовый файл. Этот файл оказался удален (deleted в lsof), однако возможности сигналом сказать приложению переоткрыть файлы или просто перезапустить приложение – нет. Так как приложение продолжает писать в удаленный файл, место на диске постепенно заканчивается. Основываясь на знаниях о перенаправлении потоков предложите способ обнуления открытого удаленного файла (чтобы освободить место на файловой системе).
-ОТВЕТ
+1. Предположим, приложение пишет лог в текстовый файл. Этот файл оказался удален (deleted в lsof), однако возможности сигналом сказать приложению переоткрыть файлы или просто перезапустить приложение – нет. Так как приложение продолжает писать в удаленный файл, место на диске постепенно заканчивается. Основываясь на знаниях о перенаправлении потоков предложите способ обнуления открытого удаленного файла (чтобы освободить место на файловой системе). </br>
+    Терминал 1. Создание файла и настройка логирования:
+    ```
+    vagrant@vagrant:~/tping$ echo " " > ping.log
+    vagrant@vagrant:~/tping$ exec 5> ping.log
+    vagrant@vagrant:~/tping$ ping 127.0.0.1 >&5
+    ```
+    Терминал 2. Удаление файла:
+    ```
+    vagrant@vagrant:~/tping$ rm ping.log
+    vagrant@vagrant:~/tping$ ls -l
+    total 0
+    ```
+    Терминал 2. Поиск: 
+    ```
+    vagrant@vagrant:~/tping$ lsof | grep ping
+    bash      1358                        vagrant  cwd       DIR              253,0     4096    1181766 /home/vagrant/tping
+    bash      1358                        vagrant    5w      REG              253,0    14904    1181768 /home/vagrant/tping/ping.log (deleted)
+    vagrant@vagrant:~/tping$ sudo lsof -p 1358 | grep ping
+    bash    1358 vagrant  cwd    DIR  253,0     4096 1181766 /home/vagrant/tping
+    bash    1358 vagrant    5w   REG  253,0    14904 1181768 /home/vagrant/tping/ping.log (deleted)
+    ```
+    Терминал 2. Очистка:
+    ```
+    vagrant@vagrant:~/tping$ cat /dev/null | sudo tee /proc/1358/fd/5
+    vagrant@vagrant:~/tping$ sudo lsof -p 1358 | grep ping
+    bash    1358 vagrant  cwd    DIR  253,0     4096 1181766 /home/vagrant/tping
+    bash    1358 vagrant    5w   REG  253,0        0 1181768 /home/vagrant/tping/ping.log (deleted)
+    vagrant@vagrant:~/tping$
+    ```
 
 1. Зомби-процессы не занимают ресурсы в ОС (CPU, RAM, IO),  но не освобождают запись в таблице процессов.
     
