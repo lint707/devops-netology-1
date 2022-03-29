@@ -31,9 +31,7 @@
     ```
     
 1. Предположим, приложение пишет лог в текстовый файл. Этот файл оказался удален (deleted в lsof), однако возможности сигналом сказать приложению переоткрыть файлы или просто перезапустить приложение – нет. Так как приложение продолжает писать в удаленный файл, место на диске постепенно заканчивается. Основываясь на знаниях о перенаправлении потоков предложите способ обнуления открытого удаленного файла (чтобы освободить место на файловой системе).
-    ```
-    ХЗХЗХЗЗЗЗХЗХЗХЗХЗХЗХЗЗЗХХ
-    ```
+ОТВЕТ
 
 1. Зомби-процессы не занимают ресурсы в ОС (CPU, RAM, IO),  но не освобождают запись в таблице процессов.
     
@@ -52,11 +50,22 @@
     661    irqbalance          6   0 /proc/stat
     ```
     
-1. Какой системный вызов использует `uname -a`? Приведите цитату из man по этому системному вызову, где описывается альтернативное местоположение в `/proc`, где можно узнать версию ядра и релиз ОС.
+1.  `uname -a` использует системный вызов:
     ```
-    ХЗХЗХЗЗЗЗХЗХЗХЗХЗХЗХЗЗЗХХ
+    vagrant@vagrant:~$ strace uname -a > uname.log 2>&1
+    vagrant@vagrant:~$ cat uname.log |grep uname
+    execve("/usr/bin/uname", ["uname", "-a"], 0x7ffe1e653ea8 /* 24 vars */) = 0
+    uname({sysname="Linux", nodename="vagrant", ...}) = 0
+    uname({sysname="Linux", nodename="vagrant", ...}) = 0
+    uname({sysname="Linux", nodename="vagrant", ...}) = 0
+    vagrant@vagrant:~$:
     ```
-
+    Цитата из `man 2 uname` по этому системному вызову:
+    ```    
+           Part of the utsname information is also accessible via /proc/sys/kernel/{ostype, hostname, osrelease, version,
+       domainname}.
+    ```
+    
 1. Оператор `;` выполняет несколько команд одновременно последовательно и обеспечивает вывод без зависимости от успеха и отказа других команд.
     Оператор `&&` (AND оператор) выполнит вторую команду только в том случае, если команда 1 успешно выполнена.
     ```
@@ -68,14 +77,48 @@
     `set -e` останавливает выполнение скрипта, если команда или конвейер имеет ошибку, поэтому использование вместе с `&&`, не имеет смысла.
 
 
-1. Из каких опций состоит режим bash `set -euxo pipefail` и почему его хорошо было бы использовать в сценариях?
-    ```
-    ХЗХЗХЗЗЗЗХЗХЗХЗХЗХЗХЗЗЗХХ
-    ```
+1. Режим bash `set -euxo pipefail` состоит из опций: </br>
+    `-e` - прекращает выполнение скрипта если команда завершилась ошибкой, выводит в `stderr` строку с ошибкой. </br>
+    `-u` - прекращает выполнение скрипта, если встретилась несуществующая переменная. </br>
+    `-x` - выводит выполняемые команды в `stdout` перед выполненинем. </br>
+    `-o pipefail` - прекращает выполнение скрипта, даже если одна из частей пайпа завершилась ошибкой. </br>
+    Использование данного сценария полезно, в случаеналичия ошибок в скрипте, повышает удобство их отлова, увеличивает детализацию по логам и останавливает выполение скрипта, для последующего исправления. </br>
 
-1. Используя `-o stat` для `ps`, определите, какой наиболее часто встречающийся статус у процессов в системе. В `man ps` ознакомьтесь (`/PROCESS STATE CODES`) что значат дополнительные к основной заглавной буквы статуса процессов. Его можно не учитывать при расчете (считать S, Ss или Ssl равнозначными).
+1. Наиболее часто встречающийся статус у процессов в системе: </br>
     ```
-    ХЗХЗХЗЗЗЗХЗХЗХЗХЗХЗХЗЗЗХХ
+    vagrant@vagrant:~$ ps -o stat 
+    STAT
+    Ss
+    R+
     ```
- 
- ---
+Дополнительные символы к основной заглавной буквы статуса процессов, нужны для указаия дополнительных характеристик. 
+К примену для, `S` - прерываемый режим сна (ожидание завершения события)
+`s` - является лидером сеанса
+`l` - является многопоточным 
+```
+PROCESS STATE CODES
+       Here are the different values that the s, stat and state output specifiers (header "STAT" or "S") will display
+       to describe the state of a process:
+
+               D    uninterruptible sleep (usually IO)
+               I    Idle kernel thread
+               R    running or runnable (on run queue)
+               S    interruptible sleep (waiting for an event to complete)
+               T    stopped by job control signal
+               t    stopped by debugger during the tracing
+               W    paging (not valid since the 2.6.xx kernel)
+               X    dead (should never be seen)
+               Z    defunct ("zombie") process, terminated but not reaped by its parent
+
+       For BSD formats and when the stat keyword is used, additional characters may be displayed:
+
+               <    high-priority (not nice to other users)
+               N    low-priority (nice to other users)
+               L    has pages locked into memory (for real-time and custom IO)
+               s    is a session leader
+               l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
+               +    is in the foreground process group
+```
+
+---
+
