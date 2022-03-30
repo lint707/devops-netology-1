@@ -1,11 +1,6 @@
 # Домашнее задание к занятию "3.4. Операционные системы, лекция 2"
 
-1. На лекции мы познакомились с [node_exporter](https://github.com/prometheus/node_exporter/releases). В демонстрации его исполняемый файл запускался в background. Этого достаточно для демо, но не для настоящей production-системы, где процессы должны находиться под внешним управлением. Используя знания из лекции по systemd, создайте самостоятельно простой [unit-файл](https://www.freedesktop.org/software/systemd/man/systemd.service.html) для node_exporter:
-
-    * поместите его в автозагрузку,
-    * предусмотрите возможность добавления опций к запускаемому процессу через внешний файл (посмотрите, например, на `systemctl cat cron`),
-    * удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
-    Установка node_exporter:
+1. Установка node_exporter:
     ```
    vagrant@vagrant:~$ vagrant@vagrant:~$ wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-386.tar.gz
    vagrant@vagrant:~$ tar zxvf node_exporter-1.3.1.linux-386.tar.gz
@@ -39,7 +34,7 @@
     ``` 
     vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ sudo chmod 644 /etc/systemd/system/node_exporter.service
     ```        
-   Перезапуск, автозапуск, старт node_exporter
+   Перезапуск deamon, Настройка автозапуска, старт node_exporter
     ```
     vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ systemctl daemon-reload
    ==== AUTHENTICATION COMPLETE ===
@@ -71,9 +66,45 @@
    Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=tls_config.go:195 level=info msg="TLS i>   
    lines 1-19/19 (END)
     ```    
+        
+1. Опции node_exporter с выводом `/metrics` через  `curl http://localhost:9100/metrics`. Примеры опций для базового мониторинга хоста по CPU, памяти, диску и сети.
+    ```    
+   | grep node_cpu
+   node_cpu_guest_seconds_total
+   node_cpu_seconds_total
+   
+   | grep node_memory
+   node_memory_Active_bytes
+   node_memory_Inactive_bytes
+   node_memory_MemFree_bytes
+   node_memory_MemTotal_bytes
+   node_memory_SwapCached_bytes  
+   node_memory_SwapFree_bytes 
+   node_memory_SwapTotal_bytes
+   node_memory_MemAvailable_bytes
+   
+   | grep node_disk
+   node_disk_io_time_seconds_total
+   node_disk_read_bytes_total
+   node_disk_read_time_seconds_total
+   node_disk_reads_completed_total
+   node_disk_write_time_seconds_total
+   node_disk_writes_completed_total
+   node_disk_written_bytes_total
+   
+   | grep node_network
+   node_network_address_assign_type
+   node_network_device_id
+   node_network_flags
+   node_network_iface_id
+   node_network_iface_link
+   node_network_mtu_bytes
+   node_network_receive_bytes_total
+   node_network_speed_bytes
+   node_network_transmit_bytes_total
+   node_network_up
+    ```    
     
-    
-1. Ознакомьтесь с опциями node_exporter и выводом `/metrics` по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
 1. Установите в свою виртуальную машину [Netdata](https://github.com/netdata/netdata). Воспользуйтесь [готовыми пакетами](https://packagecloud.io/netdata/netdata/install) для установки (`sudo apt install -y netdata`). После успешной установки:
     * в конфигурационном файле `/etc/netdata/netdata.conf` в секции [web] замените значение с localhost на `bind to = 0.0.0.0`,
     * добавьте в Vagrantfile проброс порта Netdata на свой локальный компьютер и сделайте `vagrant reload`:
