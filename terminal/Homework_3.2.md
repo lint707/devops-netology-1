@@ -84,15 +84,17 @@
 	first text
 	
 	second text
-	vagrant@vagrant:~/test2$ cat new_out.txt
-	cat: new_out.txt: No such file or directory
-	vagrant@vagrant:~/test2$ cat new.txt > new_out.txt
-	vagrant@vagrant:~/test2$ cat new_out.txt
+	vagrant@vagrant:~/test2$ cat new2.txt
+	cat: new2.txt: No such file or directory
+	vagrant@vagrant:~/test2$ cat <new.txt >new2.txt
+	vagrant@vagrant:~/test2$ cat new2.txt
 	first text
 	
 	second text
 	vagrant@vagrant:~/test2$
     ```
+    
+    `cat < new.txt > new2.txt` - gолучается перенаправили поток вывода из файла 1.txt в поток ввода команды cat , затем поток вывода команды cat в файл 2.txt 
     
 1. Получилось вывести  вывести данные из PTY в какой-либо из эмуляторов TTY. 
     ```
