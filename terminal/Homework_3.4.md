@@ -5,7 +5,74 @@
     * поместите его в автозагрузку,
     * предусмотрите возможность добавления опций к запускаемому процессу через внешний файл (посмотрите, например, на `systemctl cat cron`),
     * удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
-
+    Установка node_exporter:
+    ```
+   vagrant@vagrant:~$ vagrant@vagrant:~$ wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-386.tar.gz
+   vagrant@vagrant:~$ tar zxvf node_exporter-1.3.1.linux-386.tar.gz
+   node_exporter-1.3.1.linux-386/
+   node_exporter-1.3.1.linux-386/LICENSE
+   node_exporter-1.3.1.linux-386/NOTICE
+   node_exporter-1.3.1.linux-386/node_exporter
+   vagrant@vagrant:~$ ls -l
+   total 11296
+   drwxr-xr-x 2 vagrant vagrant    4096 Dec  5 11:15 node_exporter-1.3.1.linux-386
+   -rw-rw-r-- 1 vagrant vagrant 8624587 Dec  8 08:52 node_exporter-1.3.1.linux-386.tar.gz
+    ```
+   Создание /node_exporter.service:
+    ```
+   vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ sudo cp node_exporter /usr/local/bin/
+   vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ sudo useradd --no-create-home --shell /bin/false nodeusr
+   vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ sudo chown -R nodeusr:nodeusr /usr/local/bin/node_exporter
+   vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ sudo vim /etc/systemd/system/node_exporter.service
+   [Unit]
+   Description=Node Exporter metrics
+   After=multi-user.target
+   [Service]
+   User=nodeusr
+   EnvironmentFile=-/etc/default/node_exporter
+   ExecStart=/usr/local/bin/node_exporter $EXTRA_OPTS
+   KillMode=process
+   [Install]
+   WantedBy=multi-user.target
+    ```   
+    Выставляем права (Все пользователи имеют право чтения; владелец может редактировать):
+    ``` 
+    vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ sudo chmod 644 /etc/systemd/system/node_exporter.service
+    ```        
+   Перезапуск, автозапуск, старт node_exporter
+    ```
+    vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ systemctl daemon-reload
+   ==== AUTHENTICATION COMPLETE ===
+   vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ systemctl enable node_exporter
+   ==== AUTHENTICATION COMPLETE ===
+   vagrant@vagrant:~/node_exporter-1.3.1.linux-386$ systemctl start node_exporter
+   ==== AUTHENTICATION COMPLETE ===
+    ```
+    Проверка запуска node_exporter, до и после перезагрузки, автозагрузка работает:
+    ```    
+    vagrant@vagrant:~$ systemctl status node_exporter
+   ● node_exporter.service - Node Exporter metrics
+     Loaded: loaded (/etc/systemd/system/node_exporter.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2022-03-30 11:26:22 UTC; 2min 50s ago
+   Main PID: 1854 (node_exporter)
+      Tasks: 5 (limit: 2278)
+     Memory: 2.1M
+     CGroup: /system.slice/node_exporter.service
+             └─1854 /usr/local/bin/node_exporter
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:115 level=info collect>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:115 level=info collect>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:115 level=info collect>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:115 level=info collect>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:115 level=info collect>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:115 level=info collect>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:115 level=info collect>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:115 level=info collect>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=node_exporter.go:199 level=info msg="Li>
+   Mar 30 11:26:22 vagrant node_exporter[1854]: ts=2022-03-30T11:26:22.907Z caller=tls_config.go:195 level=info msg="TLS i>   
+   lines 1-19/19 (END)
+    ```    
+    
+    
 1. Ознакомьтесь с опциями node_exporter и выводом `/metrics` по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
 1. Установите в свою виртуальную машину [Netdata](https://github.com/netdata/netdata). Воспользуйтесь [готовыми пакетами](https://packagecloud.io/netdata/netdata/install) для установки (`sudo apt install -y netdata`). После успешной установки:
     * в конфигурационном файле `/etc/netdata/netdata.conf` в секции [web] замените значение с localhost на `bind to = 0.0.0.0`,
