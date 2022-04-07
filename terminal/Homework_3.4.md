@@ -132,11 +132,11 @@
     `-u` - немасштабируемый количество процессов.
 
 1. Процесс работает под PID 1 проверил через `nsenter`. 
-Терминал PID1:
+    Терминал PID1:
     ```
     root@vagrant:~$ unshare -f --pid --mount-proc sleep 1h
     ```
-Терминал PID2:
+    Терминал PID2:
     ```
     root@vagrant:~# ps aux | grep sleep
     root       42447  0.0  0.0   5480   528 pts/0    S+   14:15   0:00 unshare -f --pid --mount-proc sleep 1h
