@@ -1,0 +1,23 @@
+image: golang:1.18
+
+variables:
+  REPO_NAME: go-tests
+
+before_script:
+  - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+  - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+  - cd $GOPATH/src/$REPO_NAME
+
+stages:
+    - homework
+
+hw1:
+    stage: homework
+    script:
+      - if [[ -n $(gofmt -l 1/99_hw/game/) ]]; then echo "You need to format your code using gofmt" && exit 1; fi
+      - cd 1/99_hw/game
+      - go test -v
+      - echo "Assigment completed! Ask teacher for code review"
+    only:
+      changes:
+        - 1/99_hw/game/*
