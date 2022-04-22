@@ -77,7 +77,6 @@ eth4             2001:0:284a:364:3c9d:4cf:4d64:fbce/64 fe80::3c9d:4cf:4d64:fbce/
 2. **LLDP** – протокол для обмена информацией между соседними устройствами, позволяет определить к какому порту коммутатора подключен сервер.
 Используется команда `lldpctl` из пакета `lldpd`.
 
-#  Приведите пример конфига. </br>
 3. Используется технология `VLAN` – виртуальное разделение коммутатора. В linux устанавливается пакет `vlan`.
 ```
 vagrant@vagrant:~$ ip -br link
@@ -85,20 +84,29 @@ lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
 eth0             UP             08:00:27:b1:28:5d <BROADCAST,MULTICAST,UP,LOWER_UP>
 ```
 
-Установка пакета: `vagrant@vagrant:~$ sudo apt-get install vlan`:
-
+Установка пакета: `vagrant@vagrant:~$ sudo apt-get install vlan`.
+Отредактировал файл: `sudo nano /etc/netplan/01-netcfg.yaml`, добавив:
+```bash
+vlans:
+  vlan10:
+      id: 10
+      dhcp4: no
+      link: eth0
+      addresses: [10.0.2.220/24]
+      routes:
+        - to: 10.0.2.220/24
+          via: 10.0.2.1
+          on-link: true
 ```
-vagrant@vagrant:~$ sudo vconfig add eth0 2
 
-Warning: vconfig is deprecated and might be removed in the future, please migrate to ip(route2) as soon as possible!
-
+Перезапустил netpaln: `sudo netplan apply`, после проверил:
+```
 vagrant@vagrant:~$ ip -br link
 lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
 eth0             UP             08:00:27:b1:28:5d <BROADCAST,MULTICAST,UP,LOWER_UP>
-eth0.2@eth0      DOWN           08:00:27:b1:28:5d <BROADCAST,MULTICAST>
+vlan10@eth0      UP             08:00:27:b1:28:5d <BROADCAST,MULTICAST,UP,LOWER_UP>
 ```
 
-# Приведите пример конфига.
 4. Типы агрегации интерфейсов в Linux:  
 
 `mode=0 (balance-rr)` </br>
@@ -121,6 +129,26 @@ eth0.2@eth0      DOWN           08:00:27:b1:28:5d <BROADCAST,MULTICAST>
 
 `mode=6 (balance-alb)` </br>
 Адаптивное распределение нагрузки. Аналогично предыдущему режиму, но с возможностью балансировать также входящую нагрузку.
+
+Отредактировал файл: `sudo nano /etc/netplan/01-netcfg.yaml`, добавив:
+```bash
+bonds: 
+  bond0:
+    dhcp4: true
+    interfaces: [eth0, eth1]
+    parameters:
+      mode: 802.3ad
+      mii-monitor-interval: 1
+```
+Перезапустил netpaln: `sudo netplan apply`, после проверил:
+```
+vagrant@vagrant:~$ ip -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
+eth0             UP             d6:e7:73:49:3b:d6 <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP>
+eth1             UP             d6:e7:73:49:3b:d6 <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP>
+vlan10@eth0      UP             d6:e7:73:49:3b:d6 <BROADCAST,MULTICAST,UP,LOWER_UP>
+bond0            UP             d6:e7:73:49:3b:d6 <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP>
+```
 
 5. `Hosts/Net: 6` - количество IP адресов в сети с маской /29 
 ```bash
