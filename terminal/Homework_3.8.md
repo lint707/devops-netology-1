@@ -18,7 +18,7 @@ Routing entry for 178.155.4.0/24
       MPLS label: none
 ```
 show bgp:
-```
+```bash
 Username: rviews
 route-views>show bgp 178.155.4.XXX
 BGP routing table entry for 178.155.4.0/24, version 374902655
@@ -183,21 +183,116 @@ Paths: (23 available, best #20, table default)
       rx pathid: 0, tx pathid: 0
 ```
 
-2. Создайте dummy0 интерфейс в Ubuntu. Добавьте несколько статических маршрутов. Проверьте таблицу маршрутизации.
+2. Создали dummy0 интерфейс в Ubuntu: `vagrant@vagrant:~$ sudo ip link add dummy0 type dummy`
+```bash
+vagrant@vagrant:~$ ip -c -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
+eth0             UP             d6:e7:73:49:3b:d6 <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP>
+bond0            UP             d6:e7:73:49:3b:d6 <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP>
+vlan10@eth0      UP             d6:e7:73:49:3b:d6 <BROADCAST,MULTICAST,UP,LOWER_UP>
+dummy0           DOWN           82:a0:c9:b9:95:ef <BROADCAST,NOARP>
+vagrant@vagrant:~$
+```
 
-3. Проверьте открытые TCP порты в Ubuntu, какие протоколы и приложения используют эти порты? Приведите несколько примеров.
+Добавили статические маршруты:
+```bash
+sudo ip route add 192.168.1.0/24 via 10.0.2.15
+sudo ip route add 192.168.2.0/24 dev eth0 
+sudo ip route add 192.168.3.0/24 dev eth0 metric 100 
+```
 
-4. Проверьте используемые UDP сокеты в Ubuntu, какие протоколы и приложения используют эти порты?
+Проверили статические маршруты ip route show:
+```bash
+vagrant@vagrant:~$ ip route show
+default via 10.0.2.2 dev bond0 proto dhcp src 10.0.2.15 metric 100
+10.0.2.0/24 dev vlan10 proto kernel scope link src 10.0.2.220
+10.0.2.0/24 dev bond0 proto kernel scope link src 10.0.2.15
+10.0.2.2 dev bond0 proto dhcp scope link src 10.0.2.15 metric 100
+192.168.1.0/24 via 10.0.2.15 dev bond0
+192.168.2.0/24 dev eth0 scope link
+192.168.3.0/24 dev eth0 scope link metric 100
+```
+
+3. Проверку открытых TCP порты в Ubuntu выполним через `ss`.
+Опции утилиты `ss`:
+`-V` - Version показать версию утилиты.
+`-n` - Numeric не определять имена служб.
+`-r` - Resolve определять сетевые имена адресов с помощью DNS.
+`-a` - All отобразить все сокеты (открытые соединения).
+`-l` - Listening показать только прослушиваемые сокеты.
+`-o` - Options показать информацию таймера.
+`-e` - Extended выводить расширенную информацию о сокете.
+`-p` - Processes, показать процессы, использующие сокет.
+`-i` - Internal, посмотреть внутреннюю информацию TCP.
+`-s` - Summary, статистика использования сокета.
+`-D` - экспортировать текущее состояние TCP сокетов в файл.
+`-F` - работать с информацией, взятой из файла.
+
+Кроме того, можно вывести сокеты только нужного протокола:
+`-4`, `--ipv4` - только сокеты протокола IP версии 4.
+`-6`, `--ipv6` - только сокеты протокола IP версии 6.
+`-0`, `--packet` - только PACKET сокеты.
+`-t`, `--tcp` - TCP сокеты.
+`-u`, `--udp` - UDP сокеты.
+`-d`, `--dhcp` - DHCP сокеты.
+`-r`, `--raw` - RAW сокеты.
+`-x`, `--unix` - UNIX сокеты.
+```bash
+vagrant@vagrant:~$ ss -ta
+State        Recv-Q       Send-Q              Local Address:Port                 Peer Address:Port        Process
+LISTEN       0            4096                127.0.0.53%lo:domain                    0.0.0.0:*
+LISTEN       0            128                       0.0.0.0:ssh                       0.0.0.0:*
+ESTAB        0            0                       10.0.2.15:ssh                      10.0.2.2:53091
+LISTEN       0            128                          [::]:ssh                          [::]:*
+```
+```bash
+vagrant@vagrant:~$ ss -tl
+State         Recv-Q        Send-Q               Local Address:Port                 Peer Address:Port       Process
+LISTEN        0             4096                 127.0.0.53%lo:domain                    0.0.0.0:*
+LISTEN        0             128                        0.0.0.0:ssh                       0.0.0.0:*
+LISTEN        0             128                           [::]:ssh                          [::]:*
+```
+```bash
+vagrant@vagrant:~$ ss -lntpe
+State      Recv-Q     Send-Q           Local Address:Port           Peer Address:Port     Process
+LISTEN     0          4096             127.0.0.53%lo:53                  0.0.0.0:*         uid:101 ino:20872 sk:2 <->
+LISTEN     0          128                    0.0.0.0:22                  0.0.0.0:*         ino:24383 sk:3 <->
+LISTEN     0          128                       [::]:22                     [::]:*         ino:24394 sk:4 v6only:1 <->
+```
+Используемые порты:
+SSH Remote Login Protocol - Port `22` Protocol TCP and UDP(\*Assigned)
+DNS Access - Port `53` Protocol TCP and UDP 
+
+4. Проверил используемые UDP сокеты в Ubuntu:
+```bash
+vagrant@vagrant:~$ ss -lu
+State        Recv-Q       Send-Q                 Local Address:Port                 Peer Address:Port       Process
+UNCONN       0            0                      127.0.0.53%lo:domain                    0.0.0.0:*
+UNCONN       0            0                    10.0.2.15%bond0:bootpc                    0.0.0.0:*
+```
+```bash
+vagrant@vagrant:~$ ss -lnupe
+State      Recv-Q     Send-Q           Local Address:Port          Peer Address:Port     Process
+UNCONN     0          0                127.0.0.53%lo:53                 0.0.0.0:*         uid:101 ino:20871 sk:91 <->
+UNCONN     0          0              10.0.2.15%bond0:68                 0.0.0.0:*         uid:100 ino:20435 sk:92 <->
+```
+Используемые порты:
+DNS Access - Port `53` Protocol TCP and UDP 
+DHCP Access - Port `68` Protocol  UDP
 
 5. Используя diagrams.net, создайте L3 диаграмму вашей домашней сети или любой другой сети, с которой вы работали. 
+
 
  ---
 ## Задание для самостоятельной отработки (необязательно к выполнению)
 
 6*. Установите Nginx, настройте в режиме балансировщика TCP или UDP.
 
+
 7*. Установите bird2, настройте динамический протокол маршрутизации RIP.
 
+
 8*. Установите Netbox, создайте несколько IP префиксов, используя curl проверьте работу API.
+
 
  ---
