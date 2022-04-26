@@ -281,7 +281,7 @@ DNS Access - Port `53` Protocol TCP and UDP
 DHCP Access - Port `68` Protocol  UDP
 
 5. Используя diagrams.net, создал L3 диаграмму домашней сети: 
-![L3](/img/task5.jpg)
+  ![L3](img/task5.jpg)
 
  ---
 ## Задание для самостоятельной отработки (необязательно к выполнению)
