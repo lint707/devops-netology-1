@@ -7,7 +7,8 @@
 ![BWauthenticator ](img/BWtwo.jpg)
 
 3. Установите apache2, сгенерируйте самоподписанный сертификат, настройте тестовый сайт для работы по HTTPS.
-
+![apache](img/apache.jpg)
+![apacheSert](img/apacheS.jpg)
 
 4. Проверил на TLS уязвимости произвольный сайт в интернете:
 ```
@@ -97,7 +98,33 @@ tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 byt
 ## Задание для самостоятельной отработки (необязательно к выполнению)
 
 8*. Просканируйте хост scanme.nmap.org. Какие сервисы запущены?
+```
+vagrant@vagrant:~$ sudo nmap -A scanme.nmap.org
+Starting Nmap 7.80 ( https://nmap.org ) at 2022-04-28 09:23 UTC
+Nmap scan report for scanme.nmap.org (45.33.32.156)
+Host is up (0.0011s latency).
+Other addresses for scanme.nmap.org (not scanned): 2600:3c01::f03c:91ff:fe18:bb2f
+Not shown: 755 filtered ports, 243 closed ports
+PORT   STATE SERVICE    VERSION
+22/tcp open  tcpwrapped
+|_ssh-hostkey: ERROR: Script execution failed (use -d to debug)
+80/tcp open  tcpwrapped
+|_http-server-header: Apache/2.4.7 (Ubuntu)
+Device type: switch|phone|VoIP adapter
+Running (JUST GUESSING): Cisco IOS 10.X (94%), Cisco embedded (87%), Nokia Symbian OS (87%)
+OS CPE: cpe:/h:cisco:catalyst_3000 cpe:/o:cisco:ios:10.3 cpe:/h:cisco:catalyst_1900 cpe:/o:nokia:symbian_os cpe:/h:cisco:ata_188_voip_gateway
+Aggressive OS guesses: Cisco 3000 switch (IOS 10.3) (94%), Cisco Catalyst 1900 switch (87%), Nokia 3600i mobile phone (87%), Cisco SF300 or SG300 switch (86%), Cisco ATA 188 VoIP adapter (85%)
+No exact OS matches for host (test conditions non-ideal).
+Network Distance: 2 hops
 
+TRACEROUTE (using port 80/tcp)
+HOP RTT     ADDRESS
+1   0.75 ms _gateway (10.0.2.2)
+2   0.77 ms scanme.nmap.org (45.33.32.156)
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 162.74 seconds
+```
 
 9*. Установите и настройте фаервол ufw на web-сервер из задания 3. Откройте доступ снаружи только к портам 22,80,443
 
