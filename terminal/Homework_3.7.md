@@ -229,10 +229,14 @@ Hosts/Net: 62
  ---
 ## Задание для самостоятельной отработки (необязательно к выполнению)
 
- 8*. Установите эмулятор EVE-ng.
- 
- Инструкция по установке - https://github.com/svmyasnikov/eve-ng
-
+ 8*. Установил эмулятор EVE-ng.
+ Используя инструкцию - https://github.com/svmyasnikov/eve-ng
  Выполните задания на lldp, vlan, bonding в эмуляторе EVE-ng. 
+LLDP: 
+![lldp](img/lldp.jpg)
+
+VLAN:
+![vlan](img/vlan20.jpg)
+![ip](img/vlan20ip.jpg)
  
  ---
