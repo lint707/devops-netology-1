@@ -79,11 +79,17 @@ Testing all IPv4 addresses (port 443): 64.233.164.106 64.233.164.105 64.233.164.
 ^C
 ```
 
-5. Установите на Ubuntu ssh сервер, сгенерируйте новый приватный ключ. Скопируйте свой публичный ключ на другой сервер. Подключитесь к серверу по SSH-ключу.
- 
- 
-6. Переименуйте файлы ключей из задания 5. Настройте файл конфигурации SSH клиента, так чтобы вход на удаленный сервер осуществлялся по имени сервера.
+5. Установил на Ubuntu ssh сервер и сгенерировал новый приватный ключ: </br>
+![ssh](img/ssh1.jpg)  </br>
 
+Скопировал свой публичный ключ на другой сервер и подключился к серверу по SSH-ключу: </br>
+![ssh](img/ssh2.jpg) </br>
+
+6. Переименовал файлы ключей из задания 5 и настроил вход на удаленный сервер по имени сервера:
+![ssh](img/ssh3.jpg) </br>
+
+Файл конфигурации SSH клиента:
+![ssh](img/ssh4.jpg) </br>
 
 7. Соберите дамп трафика утилитой tcpdump в формате pcap, 100 пакетов. Откройте файл pcap в Wireshark.
 ```bash
@@ -97,7 +103,22 @@ tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 byt
  ---
 ## Задание для самостоятельной отработки (необязательно к выполнению)
 
-8*. Просканируйте хост scanme.nmap.org. Какие сервисы запущены?
+8*. Просканировал хост scanme.nmap.org. Запущены сервисы: `ssh`, `http`, `Elite`.
+```
+vagrant@vagrant:~$ sudo nmap scanme.nmap.org
+Starting Nmap 7.80 ( https://nmap.org ) at 2022-04-29 07:59 UTC
+Nmap scan report for scanme.nmap.org (45.33.32.156)
+Host is up (0.0016s latency).
+Other addresses for scanme.nmap.org (not scanned): 2600:3c01::f03c:91ff:fe18:bb2f
+Not shown: 748 filtered ports, 249 closed ports
+PORT      STATE SERVICE
+22/tcp    open  ssh
+80/tcp    open  http
+31337/tcp open  Elite
+
+Nmap done: 1 IP address (1 host up) scanned in 131.18 seconds
+```
+
 ```
 vagrant@vagrant:~$ sudo nmap -A scanme.nmap.org
 Starting Nmap 7.80 ( https://nmap.org ) at 2022-04-28 09:23 UTC
@@ -126,7 +147,10 @@ OS and Service detection performed. Please report any incorrect results at https
 Nmap done: 1 IP address (1 host up) scanned in 162.74 seconds
 ```
 
-9*. Установите и настройте фаервол ufw на web-сервер из задания 3. Откройте доступ снаружи только к портам 22,80,443
+9*. Установил и настроил фаервол `ufw` на web-сервер из задания 3:  </br>
+![ufw](img/ufw1.jpg) </br>
 
+Открыл доступ снаружи только к портам 22,80,443: </br>
+![ufw](img/ufw2.jpg) </br>
 
  ---
