@@ -1,0 +1,48 @@
+#!/bin/bash
+# This is a comment
+grade=6
+person="None"
+echo "the current directiry is:"
+pwd
+echo "the user logged in is:"
+whoami
+echo "\$1, home for the current user is: $HOME"
+echo "$person is in grade $grade"
+
+mydir=`pwd`
+mydir1=$(pwd)
+echo "1 vers: $mydir"
+echo "2 vers: $mydir1"
+
+if pwd
+then
+echo "It works"
+fi
+
+user=nonuser
+if grep $user /etc/passwd
+then
+echo "$user - EXISTS"
+else
+echo "$user - no found "
+fi
+
+val=4
+num=6
+if [ $val -gt $num ]
+then
+echo "$val more $num"
+elif [ $val -eq $num ]
+then
+echo "$val it $num"
+elif [ $val -lt $num ]
+then 
+echo "$val small $num"
+fi
+
+user1 ="grigorijkazacekno"
+if [$user1 = $USER]
+then
+echo "the user - $user1 logged"
+fi
+

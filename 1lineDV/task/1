@@ -1,0 +1,12 @@
+#!/bin/bash
+for var in first second third fourth fifth
+do
+echo The  $var item
+done
+
+for ((i=1; i<=3; i++))
+do
+echo `date +'20%y.%m.%d_%R:%S'`
+sleep 2
+#echo `date '+20%y.%m.%d_%R:%S'`
+done
