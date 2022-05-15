@@ -1,6 +1,5 @@
 Задание-обучение на практику с Ansible
-Задание-обучение на практику с Ansible
- 
+``` 
 Создать 2 хоста с Linux (debian/ubuntu) в VirtualBox, для применения Ansible рецептов.
 "server-one"
 "server-two"
@@ -18,7 +17,7 @@ var_exmpl_zz = 000
  
 Переопределить переменную для хоста "server-two" в директории  хостов: "inventories/prod/host_vars"
 var_exmpl_zz = 111
- 
+``` 
  
 2. Создать и запустить сценарий "scenario_one.yml" на хост "server-one" на создание директории "/tmp/example_dir"
 С правами доступа
