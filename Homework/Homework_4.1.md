@@ -117,5 +117,18 @@ done
 
 ### Ваш скрипт:
 ```bash
-???
+#!/bin/bash
+test "" = "$(grep '^Signed-off-by: ' "$1" |
+         sort | uniq -c | sed -e '/^[   ]*1[    ]/d')" || {
+        echo >&2 Duplicate Signed-off-by lines.
+        exit 1
+}
+
+commitRegex="^(\[[[:digit:]]{2,5}-[[:alpha:]]{3,8}-[[:digit:]]{2,4}-[[:alpha:]]{3,8}\])"
+if ! grep -qE "$commitRegex" "$1"; then
+            echo "Aborting according commit message policy. Please specify."
+                exit 1
+
+fi
 ```
+
