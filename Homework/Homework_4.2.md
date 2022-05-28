@@ -48,7 +48,10 @@ for result in result_os.split('\n'):
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+vagrant@vagrant:~/devops-netology-1$ ./script.py
+/home/vagrant/devops-netology-1/test/1.txt
+/home/vagrant/devops-netology-1/test/2.txt
+/home/vagrant/devops-netology-1/test/4.txt
 ```
 
 ## Обязательная задача 3
