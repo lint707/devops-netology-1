@@ -66,7 +66,7 @@ import sys
 dir = os.getcwd()
 if len(sys.argv)>=2:
   dir = sys.argv[1]
-  bash_command = ["cd "+dir, "git status"]
+  bash_command = ["cd "+dir, "git status 2>&1"]
   result_os = os.popen(' && '.join(bash_command)).read()
   for result in result_os.split('\n'):
     if result.find('fatal') != -1:
@@ -78,7 +78,7 @@ if len(sys.argv)>=2:
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-vagrant@vagrant:~/devops-netology-1$ ./script2.py ~/test
+vagrant@vagrant:~$ ~/devops-netology-1/script2.py ~/test
 /home/vagrant/test git не найден
 
 vagrant@vagrant:~$ ~/devops-netology-1/script2.py ~/devops-netology-1/
