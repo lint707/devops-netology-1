@@ -106,7 +106,7 @@ while 1 == 1:
       srv[url]=new_ip
     else:
      # srv[url] = new_ip
-      print(str(url) + ' ' + ip)
+      print(str(url) + ' - ' + ip)
     time.sleep(3)
 
 
@@ -118,15 +118,15 @@ vagrant@vagrant:~/devops-netology-1$ ./script3.py
  [ERROR] drive.google.com IP mistmatch: 0.0.0.0 64.233.165.194
  [ERROR] mail.google.com IP mistmatch: 0.0.0.0 216.58.209.197
  [ERROR] google.com IP mistmatch: 0.0.0.0 216.58.210.142
-drive.google.com 64.233.165.194
-mail.google.com 216.58.209.197
-google.com 216.58.210.142
-drive.google.com 64.233.165.194
-mail.google.com 216.58.209.197
- [ERROR] google.com IP mistmatch: 216.58.210.142 216.58.209.206
-drive.google.com 64.233.165.194
-mail.google.com 216.58.209.197
-google.com 216.58.209.206
+drive.google.com - 64.233.165.194
+mail.google.com - 216.58.209.197
+google.com - 216.58.210.142
+drive.google.com - 64.233.165.194
+mail.google.com - 216.58.209.197
+[ERROR] google.com IP mistmatch: 216.58.210.142 216.58.209.206
+drive.google.com - 64.233.165.194
+mail.google.com - 216.58.209.197
+google.com - 216.58.209.206
 ```
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
