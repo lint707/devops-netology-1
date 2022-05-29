@@ -59,12 +59,32 @@ vagrant@vagrant:~/devops-netology-1$ ./script.py
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import os
+import sys
+
+dir = os.getcwd()
+if len(sys.argv)>=2:
+  dir = sys.argv[1]
+  bash_command = ["cd "+dir, "git status"]
+  result_os = os.popen(' && '.join(bash_command)).read()
+  for result in result_os.split('\n'):
+    if result.find('fatal') != -1:
+      print(dir+" git не найден")
+    if result.find('modified') != -1:
+      prepare_result = result.replace('\tmodified:   ', '')
+      print(dir + prepare_result)   
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+vagrant@vagrant:~/devops-netology-1$ ./script2.py ~/test
+/home/vagrant/test git не найден
+
+vagrant@vagrant:~$ ~/devops-netology-1/script2.py ~/devops-netology-1/
+/home/vagrant/devops-netology-1/test/1.txt
+/home/vagrant/devops-netology-1/test/2.txt
+/home/vagrant/devops-netology-1/test/4.txt
 ```
 
 ## Обязательная задача 4
