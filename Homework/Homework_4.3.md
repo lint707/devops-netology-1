@@ -3,7 +3,7 @@
 
 ## Обязательная задача 1
 Мы выгрузили JSON, который получили через API запрос к нашему сервису:
-```python
+```
    { "info" : "Sample JSON output from our service\t",
         "elements" :[
             { "name" : "first",
@@ -20,7 +20,7 @@
   Нужно найти и исправить все ошибки, которые допускает наш сервис.
   
   ### Ваш скрипт:
-```python
+```json
     { "info" : "Sample JSON output from our service\t",
         "elements" : [
             { "name" : "first",
@@ -42,7 +42,6 @@
 #!/usr/bin/env python3
 import socket
 import time
-import os
 import json
 import yaml
 
@@ -56,22 +55,43 @@ while 1 == 1:
     else:
      # srv[url] = new_ip
       print(str(url) + ' - ' + ip)
-    time.sleep(3)
+  with open('srv.json', 'w') as json_file:
+    json_data= json.dumps(srv, indent=2)
+    json_file.write(json_data)
+  with open('srv.yaml', 'w') as yaml_file:
+    yaml_data= yaml.dump(srv, explicit_start=True, explicit_end=True)
+    yaml_file.write(yaml_data)
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+vagrant@vagrant:~/devops-netology-1$ ./script3.py
+ [ERROR] drive.google.com IP mistmatch: 0.0.0.0 64.233.165.194
+ [ERROR] mail.google.com IP mistmatch: 0.0.0.0 216.58.210.165
+ [ERROR] google.com IP mistmatch: 0.0.0.0 216.58.210.174
+drive.google.com - 64.233.165.194
+mail.google.com - 216.58.210.165
+google.com - 216.58.210.174
 ```
 
 ### json-файл(ы), который(е) записал ваш скрипт:
 ```json
-???
+vagrant@vagrant:~/devops-netology-1$ cat srv.json
+{
+  "drive.google.com": "64.233.165.194",
+  "mail.google.com": "216.58.210.165",
+  "google.com": "216.58.210.174"
+}
 ```
 
 ### yml-файл(ы), который(е) записал ваш скрипт:
 ```yaml
-???
+vagrant@vagrant:~/devops-netology-1$ cat srv.yaml
+---
+drive.google.com: 64.233.165.194
+google.com: 216.58.210.174
+mail.google.com: 216.58.210.165
+...
 ```
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
