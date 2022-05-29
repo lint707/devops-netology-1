@@ -92,12 +92,41 @@ vagrant@vagrant:~$ ~/devops-netology-1/script2.py ~/devops-netology-1/
 
 ### Ваш скрипт:
 ```python
-???
+#!/usr/bin/env python3
+import socket
+import time
+import os
+
+srv = {'drive.google.com':'0.0.0.0', 'mail.google.com':'0.0.0.0', 'google.com':'0.0.0.0'}
+while 1 == 1:
+  for url, ip in srv.items():
+    new_ip = socket.gethostbyname(url)
+    if new_ip != ip:
+      print(' [ERROR] ' + str(url) +' IP mistmatch: '+srv[url]+' '+new_ip)
+      srv[url]=new_ip
+    else:
+     # srv[url] = new_ip
+      print(str(url) + ' ' + ip)
+    time.sleep(3)
+
+
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+vagrant@vagrant:~/devops-netology-1$ ./script3.py
+ [ERROR] drive.google.com IP mistmatch: 0.0.0.0 64.233.165.194
+ [ERROR] mail.google.com IP mistmatch: 0.0.0.0 216.58.209.197
+ [ERROR] google.com IP mistmatch: 0.0.0.0 216.58.210.142
+drive.google.com 64.233.165.194
+mail.google.com 216.58.209.197
+google.com 216.58.210.142
+drive.google.com 64.233.165.194
+mail.google.com 216.58.209.197
+ [ERROR] google.com IP mistmatch: 216.58.210.142 216.58.209.206
+drive.google.com 64.233.165.194
+mail.google.com 216.58.209.197
+google.com 216.58.209.206
 ```
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
