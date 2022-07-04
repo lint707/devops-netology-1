@@ -23,6 +23,11 @@ Hey, Netology
 ```
 Опубликуйте созданный форк в своем репозитории и предоставьте ответ в виде ссылки на https://hub.docker.com/username_repo.
 
+Ссылка на репозторий: https://hub.docker.com/r/lint707/nginx_netology5.3
+
+### Решение:
+
+Скачиваем образ:
 ```
 vagrant@server1:~$ docker pull ubuntu/nginx:1.18-22.04_edge
 1.18-22.04_edge: Pulling from ubuntu/nginx
@@ -37,9 +42,15 @@ docker.io/ubuntu/nginx:1.18-22.04_edge
 vagrant@server1:~$ docker images
 REPOSITORY     TAG               IMAGE ID       CREATED      SIZE
 ubuntu/nginx   1.18-22.04_edge   c1d6caca3772   9 days ago   144MB
-
+```
+Создаём dockerfile:
+```
 vagrant@server1:~/docker$ vim dockerfile
-
+FROM ubuntu/nginx:1.18-22.04_edge
+RUN echo '<html><head>Hey, Netology</head><body><h1>I am DevOps Engineer!</h1></body></html>' > /var/www/html/index.html
+```
+Делаем fork образа:
+```
 vagrant@server1:~/docker$ docker build -f dockerfile -t lint707/nginx_netology5.3  .
 Sending build context to Docker daemon  2.048kB
 Step 1/2 : FROM ubuntu/nginx:1.18-22.04_edge
@@ -55,7 +66,9 @@ vagrant@server1:~/docker$ docker images
 REPOSITORY                  TAG               IMAGE ID       CREATED              SIZE
 lint707/nginx_netology5.3   latest            a61bb2bbbf69   About a minute ago   144MB
 ubuntu/nginx                1.18-22.04_edge   c1d6caca3772   9 days ago           144MB
-
+```
+Авторизация и загрузка на hud.docker:
+```
 vagrant@server1:~/docker$ docker login -u lint707
 Password: 
 Login Succeeded
@@ -70,42 +83,16 @@ e29410d289ba: Mounted from ubuntu/nginx
 a790f937a6ae: Mounted from ubuntu/nginx 
 latest: digest: sha256:cee73146fb887ef3c7937a9c7a9c483e965b335b3b64acf047cb228ceb76e31a size: 1362
 ```
-https://hub.docker.com/r/lint707/nginx_netology5.3
+Запуск контейнера:
 ```
+vagrant@server1:~/docker$ docker run -d -v /home/vagrant/docker/index.html:/var/www/html/index.html -p 8080:80 lint707/nginx_netology5.3
+34fd7120644b6d72cc3d36fc9e044e690a42e6363b9f352f828b3f8282ea343d
 vagrant@server1:~/docker$ curl localhost:8080
-<!DOCTYPE html>
-<html>
-<head>
-<title>Welcome to nginx!</title>
-<style>
-    body {
-        width: 35em;
-        margin: 0 auto;
-        font-family: Tahoma, Verdana, Arial, sans-serif;
-    }
-</style>
-</head>
-<body>
-<h1>Welcome to nginx!</h1>
-<p>If you see this page, the nginx web server is successfully installed and
-working. Further configuration is required.</p>
-
-<p>For online documentation and support please refer to
-<a href="http://nginx.org/">nginx.org</a>.<br/>
-Commercial support is available at
-<a href="http://nginx.com/">nginx.com</a>.</p>
-
-<p><em>Thank you for using nginx.</em></p>
-</body>
+<html> 
+	<head>Hey, Netology</head>
+	<body><h1>I am DevOps Engineer!</h1></body>
 </html>
 ```
-При этом в контейнере корректно запустилось: 
-```
-root@17ff1d0d7a4e:/usr/share/nginx/html# cat index.html 
-<html><head>Hey, Netology</head><body><h1>I am DevOps Engineer!</h1></body></html>
-root@17ff1d0d7a4e:/usr/share/nginx/html# 
-```
-Нужно понять где ошибка.
 
 ## Задача 2
 
@@ -127,9 +114,7 @@ root@17ff1d0d7a4e:/usr/share/nginx/html#
 - Шина данных на базе Apache Kafka:
 > Docker, возможность быстрого отката, в случае проблем на проде, изолированность приложений.
 - Elasticsearch кластер для реализации логирования продуктивного веб-приложения - три ноды elasticsearch, два logstash и две ноды kibana:
-> 
-> ??? дописать ответ
-> 
+>Docker, простота при обновлении, миграции, удаления логов, удобнее при кластеризации - меньше времени на запуск контейнеров.
 - Мониторинг-стек на базе Prometheus и Grafana:
 > Docker, удобство масштабирования, легковесность, простота развётрывания, есть готовые образы.
 - MongoDB, как основное хранилище данных для java-приложения:
@@ -145,12 +130,65 @@ root@17ff1d0d7a4e:/usr/share/nginx/html#
 - Добавьте еще один файл в папку ```/data``` на хостовой машине;
 - Подключитесь во второй контейнер и отобразите листинг и содержание файлов в ```/data``` контейнера.
 
+### Решение:
+
+```
+vagrant@server1:~/docker$ docker images
+REPOSITORY                  TAG                      IMAGE ID       CREATED        SIZE
+lint707/nginx_netology5.3   latest                   a61bb2bbbf69   2 days ago     144MB
+debian                      unstable-20220622-slim   2a8550669e9d   11 days ago    76MB
+centos                      centos7.9.2009           eeb6ee3f44bd   9 months ago   204MB
+vagrant@server1:~/docker$ docker run -v /data:/data -dt --name debian
+"docker run" requires at least 1 argument.
+See 'docker run --help'.
+
+Usage:  docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+Run a command in a new container
+vagrant@server1:~/docker$ docker run -v /home/vagrant/docker/data:/data -dt --name debian debian
+Unable to find image 'debian:latest' locally
+latest: Pulling from library/debian
+1339eaac5b67: Pull complete 
+Digest: sha256:859ea45db307402ee024b153c7a63ad4888eb4751921abbef68679fc73c4c739
+Status: Downloaded newer image for debian:latest
+50de199aaba04fb0770d6fc58e2594ae8d525a0a1090d167a1129220b31a43b5
+vagrant@server1:~/docker$ docker run -v /home/vagrant/docker/data:/data -dt --name centos centos
+Unable to find image 'centos:latest' locally
+latest: Pulling from library/centos
+a1d0c7532777: Pull complete 
+Digest: sha256:a27fd8080b517143cbbbab9dfb7c8571c40d67d534bbdee55bd6c473f432b177
+Status: Downloaded newer image for centos:latest
+eefe838d522feb6951afbc001ed3af6f8994f90a2d170cbdff4b302ce1e9ab47
+vagrant@server1:~/docker$ 
+```
+Создание файла в первом контейнере:
+```
+vagrant@server1:~/docker$ docker exec -it 3a056480b140 bash
+[root@3a056480b140 /]# cd data
+[root@3a056480b140 data]# echo "test text" >> test.txt
+```
+Создание файла на хостовой машине:
+```
+vagrant@server1:~/docker/data$ vim test.txt
+```
+Проверка в втором контейнере:
+```
+vagrant@server1:~/docker/data$ docker exec -it 50de199aaba0 bash
+[root@50de199aaba0:/data]# ls -lha
+total 16K
+drwxrwxr-x 2 1000 1000 4.0K Jul  4 07:52 .
+drwxr-xr-x 1 root root 4.0K Jul  4 07:51 ..
+-rw-r--r-- 1 root root   10 Jul  4 07:52 test.txt
+-rw-rw-r-- 1 1000 1000   10 Jul  4 07:58 test_host.txt
+```
+
 ## Задача 4 (*)
 
 Воспроизвести практическую часть лекции самостоятельно.
 
 Соберите Docker образ с Ansible, загрузите на Docker Hub и пришлите ссылку вместе с остальными ответами к задачам.
 
+https://hub.docker.com/r/lint707/ansible_ntl
 
 ---
 
