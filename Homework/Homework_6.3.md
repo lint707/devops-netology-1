@@ -122,10 +122,11 @@ pid-file=/var/run/mysqld/mysqld.pid
 socket=/var/run/mysqld/mysqld.sock
 
 !includedir /etc/mysql/conf.d/
-innodb_flush_log_at_trx_commit = 0
-innodb_file_format=Barracuda
+??innodb_flush_log_at_trx_commit = 0 / innodb_flush_log_at_trx_commit = 2
+??innodb_file_format=Barracuda
 innodb_log_buffer_size= 1M
-key_buffer_size = 300M
-max_binlog_size= 100M
+??max_binlog_size= 100M / innodb_log_file_size = 100M
+??innodb_file_per_table = ON
+??innodb_buffer_pool_size = 1G
 ```
 ---
