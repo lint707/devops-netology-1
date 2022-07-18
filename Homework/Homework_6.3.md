@@ -107,6 +107,22 @@ socket=/var/run/mysqld/mysqld.sock
 - Буффер кеширования 30% от ОЗУ
 - Размер файла логов операций 100 Мб
 
+
+Измените его согласно ТЗ (движок InnoDB): Скорость IO важнее сохранности данных:
+innodb_flush_method = O_DSYNC
+innodb_flush_log_at_trx_commit = 0
+
+Нужна компрессия таблиц для экономии места на диске:
+innodb_file_per_table = 1
+
+Размер буфера с незакомиченными транзакциями 1 Мб:
+innodb_log_buffer_size = 1M
+
+Буфер кеширования 30% от ОЗУ (Всего 4 ГБ, доступно 2.5, 30% = 750 Мб):
+innodb_buffer_pool_size = 750M
+
+Размер файла логов операций 100 Мб:
+innodb_log_file_size = 100M
 Приведите в ответе измененный файл `my.cnf`.
 ```
 [mysqld]
@@ -128,5 +144,25 @@ innodb_log_buffer_size= 1M
 ??max_binlog_size= 100M / innodb_log_file_size = 100M
 ??innodb_file_per_table = ON
 ??innodb_buffer_pool_size = 1G
+
+#Set IO Speed
+# 0 - скорость
+# 1 - сохранность
+# 2 - универсальный параметр
+innodb_flush_log_at_trx_commit = 0 
+
+#Set compression
+# Barracuda - формат файла с сжатием
+innodb_file_format=Barracuda
+
+#Set buffer
+innodb_log_buffer_size	= 1M
+
+#Set Cache size
+key_buffer_size = 640М
+
+#Set log size
+max_binlog_size	= 100M
+
 ```
 ---
