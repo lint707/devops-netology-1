@@ -53,8 +53,18 @@
  - Ручного разбиения можно было исбежать, если при изначальном проектировании сделать таблицу как секционарованную.
 
 ## Задача 4
-Используя утилиту `pg_dump` создайте бекап БД `test_database`.
+Используя утилиту `pg_dump` создайте бекап БД `test_database`.  
+![psg2](img/psg2_bkp.jpg)  
 
 Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
+Доработать файл бекапа можно следующим образом, добавив UNIQUE(title):
+```
+CREATE TABLE public.orders (
+    id integer NOT NULL,
+    title character varying(80) NOT NULL,
+    price integer DEFAULT 0,
+    UNIQUE(title)
+);
+```
 
 ---
