@@ -24,22 +24,22 @@
 - выхода из psql: `postgres=# \q`  
 ![psg2](img/psg2_q.jpg)  
 
-## Задача 2
+## Задача 2  
+Используя `psql` создайте БД `test_database`.  
+![psg2](img/psg2_l2.jpg)  
 
-Используя `psql` создайте БД `test_database`.
+Изучите [бэкап БД](https://github.com/netology-code/virt-homeworks/tree/master/06-db-04-postgresql/test_data).  
 
-Изучите [бэкап БД](https://github.com/netology-code/virt-homeworks/tree/master/06-db-04-postgresql/test_data).
+Восстановите бэкап БД в `test_database`.  
+![psg2](img/psg2_bk.jpg)  
 
-Восстановите бэкап БД в `test_database`.
+Перейдите в управляющую консоль `psql` внутри контейнера.  
+Подключитесь к восстановленной БД и проведите операцию ANALYZE для сбора статистики по таблице.  
+![psg2](img/psg2_cr.jpg)  
 
-Перейдите в управляющую консоль `psql` внутри контейнера.
-
-Подключитесь к восстановленной БД и проведите операцию ANALYZE для сбора статистики по таблице.
-
-Используя таблицу [pg_stats](https://postgrespro.ru/docs/postgresql/12/view-pg-stats), найдите столбец таблицы `orders` 
-с наибольшим средним значением размера элементов в байтах.
-
-**Приведите в ответе** команду, которую вы использовали для вычисления и полученный результат.
+Используя таблицу [pg_stats](https://postgrespro.ru/docs/postgresql/12/view-pg-stats), найдите столбец таблицы `orders`   
+с наибольшим средним значением размера элементов в байтах.  
+![psg2](img/psg2_pgstats.jpg)  
 
 ## Задача 3
 
